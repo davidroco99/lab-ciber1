@@ -1,0 +1,79 @@
+
+services:
+  dvwa:
+    image: vulnerables/web-dvwa:latest
+    platform: linux/amd64
+    restart: unless-stopped
+    depends_on:
+      - mariadb
+    environment:
+      - MYSQL_HOST=mariadb
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=dvwa_password
+      - MYSQL_DATABASE=dvwa
+    ports:
+      - "8080:80"       # opción segura por defecto. Si querés root URL, cambiar a "80:80"
+    volumes:
+      - dvwa_data:/var/www/html
+    networks:
+      - internal_net
+
+  mariadb:
+    image: mariadb:10.9
+    platform: linux/amd64
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password_change_this
+      - MYSQL_DATABASE=dvwa
+      - MYSQL_USER=dvwa
+      - MYSQL_PASSWORD=dvwa_password
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - internal_net
+
+  # Opcionales: se exponen a la LAN si se usan en bridged (revisar reglas de firewall)
+  ftp:
+    image: stilliard/pure-ftpd:hardened
+    platform: linux/amd64
+    restart: unless-stopped
+    environment:
+      - PUBLICHOST=__VM_IP__   # opcional: reemplazar con la IP asignada
+    ports:
+      - "2121:21"
+    networks:
+      - internal_net
+
+  samba:
+    image: dperson/samba
+    platform: linux/amd64
+    restart: unless-stopped
+    command: -u "alumno;Insegura123" -s "Compartido;/srv/share;yes;no;no;alumno"
+    volumes:
+      - ./samba-data:/srv/share
+    ports:
+      - "4455:445"
+    networks:
+      - internal_net
+
+  dns_server:
+    image: sameersbn/bind:latest
+    platform: linux/amd64
+    restart: unless-stopped
+    environment:
+      - BIND_DOMAIN=corp.local
+      - BIND_ALLOW_QUERY=any
+    ports:
+      - "5353:53/udp"
+      - "5353:53/tcp"
+    networks:
+      - internal_net
+
+volumes:
+  dvwa_data:
+  mariadb_data:
+  samba-data:
+
+networks:
+  internal_net:
+    driver: bridge
