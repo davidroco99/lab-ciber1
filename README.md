@@ -30,41 +30,41 @@ Como la máquina virtual está configurada en modo puente (bridged), su IP perte
 Para conocerla, ejecutá dentro de la VM:
 
 ip a show
-# o
+o
 ifconfig
 
 
-📍 Anotá la dirección IPv4 que aparezca (por ejemplo 192.168.10.50).
+#📍 Anotá la dirección IPv4 que aparezca (por ejemplo 192.168.10.50).
 
 Luego abrí en tu navegador:
 
 http://<IP_VM>:8080
 
 
-Ejemplo:
+#Ejemplo:
 👉 http://192.168.10.50:8080
 
-🔒 Servicios activos
+#🔒 Servicios activos
 Servicio	Puerto	Descripción	Credenciales
 DVWA (Web App)	8080	Aplicación vulnerable para pruebas web	admin / password (por defecto DVWA)
 MariaDB	interno	Base de datos DVWA	dvwa / dvwa_password
 FTP	2121	Servidor FTP para pruebas	conexión anónima o alumno
 Samba	4455	Recurso compartido de red	usuario alumno, pass Insegura123
 DNS	5353	Servidor DNS simple (corp.local)	—
-🧪 Pruebas básicas
+#🧪 Pruebas básicas
 
-# desde la VM o desde otra máquina de la red del aula
+# Desde la VM o desde otra máquina de la red del aula
 curl -I http://<IP_VM>:8080
 dig @<IP_VM> lab.corp.local
 nmap -p 21,80,445,5353 <IP_VM>
 
-⚠️ Seguridad
+#⚠️ Seguridad
 
 Este entorno es intencionalmente vulnerable.
 No debe conectarse a Internet ni a redes productivas.
 Solo usar dentro de la red de laboratorio o en una máquina virtual aislada.
 
-👨‍🏫 Autor
+#👨‍🏫 Autor
 
 Ing. Ricardo David Roco
 Cátedra: Seguridad Ofensiva Avanzada – UTN FRM
